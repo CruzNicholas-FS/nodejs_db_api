@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const authorRoutes = require("../api/routes/authors");
 const bookRoutes = require("../api/routes/books");
 const playerRoutes = require("../api/routes/players");
+const teamRoutes = require("../api/routes/teams");
 
 //middleware for logging
 app.use(morgan("dev"));
@@ -35,6 +36,8 @@ app.use("/authors", authorRoutes);
 app.use("/books", bookRoutes);
 
 app.use("/players", playerRoutes);
+
+app.use("/teams", teamRoutes);
 
 //middleware modules
 app.use((req, res, next) => {

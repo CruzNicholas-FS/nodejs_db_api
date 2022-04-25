@@ -28,6 +28,16 @@ router.post("/", (req, res, next)=>{
         team:req.body.team
     });
 
+    Player.find({name:req.body.name, number: req.body.number})
+    .exec()
+    .then(result=>{
+      console.log(result);
+      if (result.length>0) {
+        return res.status(406).json({
+          message:"Player already added"
+        })
+      }
+
     newPlayer.save()
     .then(result=>{
         console.log(result);
@@ -51,6 +61,15 @@ router.post("/", (req, res, next)=>{
         res.status(500).json({
           error:{
             message: err.message
+          }
+        });
+      });
+    })
+    .catch(err=>{
+        console.error(err);
+        res.status(500).json({
+          error:{
+            message:`Unable to save author with name${req.body.name}`
           }
         });
       });
@@ -115,13 +134,6 @@ router.patch("/:id", (req, res, next)=>{
 
 router.delete("/:id", (req, res, next)=>{
     const playerId = req.params.id;
-
-    const deletedPlayer = {
-        name:req.body.name,
-        number: req.body.number,
-        position:req.body.position,
-        team:req.body.team
-    }
 
     Player.findOneAndDelete({_id:playerId})
     .then(result=>{
