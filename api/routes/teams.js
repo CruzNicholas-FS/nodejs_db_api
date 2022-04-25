@@ -1,9 +1,9 @@
-const { response, json } = require("express");
 const express=require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
 
 const Team = require("../models/team");
+const Messages = require("../../messages/messages")
 
 router.get("/", (req, res, next)=>{
     Team.find({})
@@ -30,13 +30,13 @@ router.post("/", (req, res, next)=>{
     });
 
     Team.find({name:req.body.name, player1:req.body.roster.player1})
-    .populate("roster.player1", "name number position")
+    .populate("roster.player1", "name number position").populate("roster.player2", "name number position").populate("roster.player3", "name number position").populate("roster.player4", "name number position").populate("roster.player5", "name number position")
     .exec()
     .then(result=>{
       console.log(result);
       if (result.length>0) {
         return res.status(406).json({
-          message:"Team already added"
+          message:Messages.teamAlreadyAdded
         })
       }
 
@@ -44,7 +44,7 @@ router.post("/", (req, res, next)=>{
     .then(result=>{
         console.log(result);
         res.status(200).json({
-            message:"Team added",
+            message:Messages.teamAdded,
             team:{
                 name:result.name,
                 location:result.location,
@@ -76,7 +76,7 @@ router.post("/", (req, res, next)=>{
         console.error(err);
         res.status(500).json({
           error:{
-            message:`Unable to add ${req.body.name}`
+            message:`${Messages.teamAddError}${req.body.name}`
           }
         });
       });
@@ -91,10 +91,11 @@ router.get("/:id", (req, res, next)=>{
     .then(team=>{
       if (!team) {
         return res.status(404).json({
-          message:"Team not found"
+          message:Messages.teamNotFound
         })
       }
       res.status(201).json({
+        message:Messages.teamFoundByID,
         team:team
       })
     })
@@ -122,11 +123,11 @@ router.patch("/:id", (req, res, next)=>{
     .then(result=>{
         if (!result) {
             return res.status(404).json({
-                message:"Team not found"
+                message:Messages.teamNotFound
             })
         }
         res.status(200).json({
-            message:"Team updated by ID",
+            message:Messages.teamUpdatedByID,
             team:{
                 name:result.name,
                 location:result.location,
@@ -143,7 +144,7 @@ router.patch("/:id", (req, res, next)=>{
     .catch(err=>{
         res.status(500).json({
             error:{
-                message:`Unable to update ${req.body.name}`
+                message:`${Messages.teamUpdateError}${req.body.name}`
             }
         })
     })
@@ -157,7 +158,7 @@ router.delete("/:id", (req, res, next)=>{
     .exec()
     .then(result=>{
         res.status(200).json({
-            message:"Team deleted by ID",
+            message:Messages.teamDeletedByID,
             team:{
                 name:result.name,
                 location:result.location,
