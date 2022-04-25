@@ -171,7 +171,13 @@ router.delete("/:id", (req, res, next)=>{
             }
         })
     })
-    .catch()
+    .catch(err=>{
+        res.status(500).json({
+            error:{
+                message:`Unable to delete ${req.body.name}`
+            }
+        })
+    })
 });
 
 module.exports=router;
