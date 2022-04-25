@@ -9,13 +9,23 @@ router.get("/",(req, res, next)=>{
 })
 
 router.post("/",(req, res, next)=>{
-    const newBook = new Book({
-      _id: mongoose.Types.ObjectId(),
-      title: req.body.title,
-      author: req.body.author
-    })
+  const newBook = new Book({
+    _id: mongoose.Types.ObjectId(),
+    title: req.body.title,
+    author: req.body.author
+  })
 
-    //write to db
+    Book.find({title:req.body.title, author: req.body.author})
+    .exec()
+    .then(result=>{
+      console.log(result);
+      if (result.length>0) {
+        return res.status(406).json({
+          message:"Book is already cataloged"
+        })
+      }
+
+      //write to db
     newBook.save()
     .then(result=>{
       console.log(result);
@@ -37,6 +47,15 @@ router.post("/",(req, res, next)=>{
       res.status(500).json({
         error:{
           message: err.message
+        }
+      })
+    })
+    })
+    .catch(err=>{
+      console.error(err);
+      res.status(500).json({
+        error:{
+          message:`Unable to save book with title ${req.body.title}`
         }
       })
     })
