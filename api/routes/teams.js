@@ -117,7 +117,7 @@ router.patch("/:id", (req, res, next)=>{
         roster:req.body.roster
     }
 
-    Team.findOneAndUpdate({_id:teamId}, updatedTeam)
+    Team.findOneAndUpdate({_id:teamId}, updatedTeam, {returnOriginal:false})
     .populate("roster.player1", "name number position").populate("roster.player2", "name number position").populate("roster.player3", "name number position").populate("roster.player4", "name number position").populate("roster.player5", "name number position")
     .exec()
     .then(result=>{
