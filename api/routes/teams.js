@@ -7,6 +7,7 @@ const Team = require("../models/team");
 
 router.get("/", (req, res, next)=>{
     Team.find({})
+    .select("name location roster _id")
     .then(result=>{
         res.status(200).json(result);
     })
